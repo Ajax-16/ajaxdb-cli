@@ -10,15 +10,21 @@ async function main() {
 
   let defaultPort = 3000;
   let defaultHost = 'localhost';
+  let defaultUsername = 'root';
+  let defaultPassword = 'root';
 
-  let port = defaultPort
-  let host = defaultHost
+  let port = defaultPort;
+  let host = defaultHost;
+  let username = defaultUsername;
+  let password = defaultPassword;
 
   program
     .option('-f, --file <filepath>', 'Specify the file to process')
     .option('-i, --input <command>', 'Specify the initial command to process')
-    .option('-p, --port <port>', 'Specify the port')
-    .option('-H, --host <hostname>', 'Specify the hostname');
+    .option('-P, --port <port>', 'Specify the port')
+    .option('-H, --host <hostname>', 'Specify the hostname')
+    .option('-u, --username <username>', 'Specify the username to make the initial connection')
+    .option('-p, --password <password>', 'Specify the password to make the initial connection')
 
   program.parse(process.argv);
 
@@ -26,9 +32,11 @@ async function main() {
 
   port = options.port ? options.port : port;
   host = options.host ? options.host : host;
+  username = options.username ? options.username : username;
+  password = options.password ? options.password : password;
 
   try {
-    const res = await handShake(host, port);
+    const res = await handShake(host, port, username, password);
     console.log(chalk.blue.bold(res))
 
     console.log(chalk.blue.bold(`
