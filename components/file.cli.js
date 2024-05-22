@@ -19,6 +19,7 @@ export async function processFile(host, port, filePath) {
     } catch (err) {
         if(err.code === 'ECONNREFUSED') {
             console.error(chalk.red("Couldn't connect to NueDB server. NUE Error Code: " + 100 + ".\nFor more information about error codes and possible solutions, please visit https://nuedb.org/docs/nue/error-codes\n"))
+            process.exit();
         }else {
             console.error(err);
         }

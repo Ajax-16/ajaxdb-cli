@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import inquirer from 'inquirer';
 import { program } from 'commander';
 import { processFile } from './components/file.cli.js';
 import { processConsole } from './components/console.cli.js';
@@ -10,13 +11,9 @@ async function main() {
 
   let defaultPort = 3000;
   let defaultHost = 'localhost';
-  let defaultUsername = 'root';
-  let defaultPassword = 'root';
-
+  let username, password;
   let port = defaultPort;
   let host = defaultHost;
-  let username = defaultUsername;
-  let password = defaultPassword;
 
   program
     .option('-f, --file <filepath>', 'Specify the file to process')
@@ -32,12 +29,36 @@ async function main() {
 
   port = options.port ? options.port : port;
   host = options.host ? options.host : host;
-  username = options.username ? options.username : username;
-  password = options.password ? options.password : password;
+  username = options.username;
+  password = options.password;
+
+  if (!username && !password) {
+    console.log(chalk.yellow.bold('[w] Username and password not specified:\n'))
+
+    const usernamePrompt = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'username',
+        message: 'Username: ',
+      },
+    ]);
+    username = usernamePrompt.username;
+
+    const passwordPrompt = await inquirer.prompt([
+      {
+        type: 'password',
+        mask: '*',
+        name: 'password',
+        message: 'Password: ',
+      },
+    ]);
+    password = passwordPrompt.password;
+    console.log('')
+  }
 
   try {
     const res = await handShake(host, port, username, password);
-    console.log(chalk.blue.bold(res))
+    console.log(chalk.blue.bold('[i] ' + res))
 
     console.log(chalk.blue.bold(`
   ////////////////////////////////////////////////////////////////
@@ -75,8 +96,8 @@ async function main() {
       processConsole(host, port)
         .catch(error => console.error(error));
     }
-  } catch(err) {
-    if(err.code === 'ECONNREFUSED') {
+  } catch (err) {
+    if (err.code === 'ECONNREFUSED') {
       console.log(chalk.red.bold('Error while connecting to NueDB server. Is the server up or are the host and the port correct?'))
     }
   }
