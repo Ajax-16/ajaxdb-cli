@@ -54,6 +54,29 @@ async function main() {
     ]);
     password = passwordPrompt.password;
     console.log('')
+  }else if(!password) {
+    console.log(chalk.yellow.bold(`[w] Password not specified for user "${username}":\n`))
+
+    const passwordPrompt = await inquirer.prompt([
+      {
+        type: 'password',
+        mask: '*',
+        name: 'password',
+        message: 'Password: ',
+      },
+    ]);
+    password = passwordPrompt.password;
+  }else if(!username) {
+    console.log(chalk.yellow.bold(`[w] Password detected without user: \n`))
+
+    const usernamePrompt = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'username',
+        message: 'Username: ',
+      },
+    ]);
+    username = usernamePrompt.username;
   }
 
   try {
